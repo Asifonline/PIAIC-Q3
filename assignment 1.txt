@@ -1,0 +1,58 @@
+pragma solidity ^0.8.0;
+//Part 1 of assignment
+contract ParentVehicle
+{
+    	function start() public pure returns (string memory) {
+    	return "The Vehicle has just started";
+    }
+    	function accelerate() public pure returns (string memory) {
+    	return "The vehicle has just accelerated";
+    }
+	    function stop() public pure returns (string memory) {
+    	return "The vehicle has just stopped";
+    }
+	    function service() public virtual returns (string memory) {
+    	return "The vehicle is being serviced";
+    }
+}
+// Part 2 of assignment
+    contract Cars is ParentVehicle{
+    constructor()  {}
+    function service() override public virtual returns (string memory) {
+	return "The car is being serviced";
+    }
+}
+    contract Truck is ParentVehicle{
+    constructor() {}
+    function service() override public returns (string memory) {
+    return "The truck is being serviced";
+    }
+ }
+ 
+    contract Motorcycle is ParentVehicle{
+    constructor() {} 
+    function service() override public returns (string memory) {
+    return "The Motorcycle is being serviced";
+    }
+ }
+ 
+//Part 3 of assignment 
+contract altoMehran is Cars {
+    
+}
+contract Hino is Truck {
+    
+}
+contract Yamaha is Motorcycle {
+    
+}
+//part 4 of assignment
+contract mehranStation is altoMehran {
+    
+}
+contract hinoStation is Hino {
+    
+}
+contract yamahaStation is Yamaha {
+    
+}
