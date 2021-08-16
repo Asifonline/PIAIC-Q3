@@ -1,0 +1,153 @@
+pragma solidity ^0.8.0;
+interface IERC20 {
+     
+    // returns total supply  of tokens in exsistence
+     
+     function totalSupply() external view returns(uint256);
+     
+     
+      // returns the amount of tokens owned by 'account'
+     
+      function balanceOf(address account) external view returns(uint256);
+      
+      /*
+       * moves amount of token from caller to recipient 
+       * returns a boolean value indicating the success of transaction
+       * emits a transfer 
+       */
+       function transfer(address recipient, uint256 amount) external view returns(uint256);
+       
+       /*
+        * Returns the remainig number of tokens that spender will be allowed to spend
+        * on behalf of owner
+        * This is zero by default
+        * This value changes when approve or allowance operation is called
+        */
+        function alloance(address owner, address recipient) external view returns(uint256);
+        
+        /**set amount as the allowance of the spender over the caller's token .
+         * Returns a boolean value indicating whether the operation succeeded .
+         * Beware that changing the allowance with this method bring the risk 
+         * that someone may use  old and new allowance by unfortunate
+         * transaction ordering
+         */
+         function approve(address spender, uint256 amount) external returns(bool);
+         
+         /** moves amount tokens from sender to recipient using the 
+          * allowance mechanism.'amount' is then deducted from callers allowance.
+          */
+          function transferFrom(address sender, address recipient, uint256 amount) external returns(bool);
+          /** emitted when value tokens are moved from 
+           * one acount to another
+           */
+          event Transfer(address indexed owner, addrsss indexed recipient, uint256 value);
+          
+          /* emitted when the allowance of the spender for an owner is set
+           * by a call to approve.'value' is the new allowance.
+           */
+           
+           event Aproval(address indexed owner, addrsss indexed recipient, uint256 value);
+           
+}
+contract BCCTOKEN is IERC20{
+    //mapping to hold balances against EOA accounts
+    mapping(address => uint256) private _balances;
+    //mapping to hold approved allowance of token to certain address
+    //       owner         spender   allowance
+    mapping(address =>mapping(address => uint256)) private _allowance;
+       //               A = 100
+       //               B = 100
+       //               C = 100
+// the amount of token in existance
+uint256 private _totalSupply;
+// owner
+address public owner;
+string public name;
+string public symbol;
+
+constructor () public{
+    name = "BCC Token";
+    symbol = "BCC3";
+    decimals = 18;
+    owner = msg.sender;
+    //1 million tokens to be generated
+    _tokenSupply = 1000000 * 10**decimals;
+    // Transfer total suply to owner
+    _balances[owner] = _totalSupply;
+    
+    //fire an event in case of token Transfer
+    emit Transfer(address(this).owner, _totalSupply);
+}
+  /*function mint(uint amount ) public returns(uint){
+      _balances[owner] += amount;
+      _totalSupply += amount;
+      
+  }*/
+  
+  function totalSupply()public view override returns(uint256){
+     return _balances[account];
+ }
+
+  function balanceOf(address  account) public view override returns (uint256){
+      return _balances[account];
+  }
+ 
+  
+    /** see IREC20 Transfer
+    * 
+    * Requirements
+    * Recipient cannot have a 0 address
+    * the caller must have a balce of atleast 'amount'
+    */
+    
+    function transfer(address recipient, uint256 amount) public virtual override returns(bool){
+        address sender = msg.sender;
+        require(sender != address[0], "BCCI: transfer from address 0");
+        require(recipient !=address[0], "BCCI: transfer to address 0");
+        require(_balances[sender]> amount, "BCCI: amount is less than the balance");
+        
+        //decrease the balance of senders token 
+        _balance[sender] = _balance[sender] - account;
+        // increase the balance of recipient account
+        _balance[recipient] = _balance[recipient] + acount;
+        emit Transfer(sender, recipient, amount);
+        return true;}
+    function allowance(address tokenOwner, address spender) public view virtual override returns (uint256){
+        return _allowance[tokenOwner][spender];
+    }
+    
+    /** approve
+     * Requirements
+     * spender cannot be zero address
+     */
+     function approve(address spender, uint256 amount) public virtual override returns(bool){
+         address tokenOwner =msg.sender;
+         require(tokenOwner != address[0],"BCCI: approve from the zero address");
+         require(spender != address[0],"BCCI: approve to the zero address");
+         _allowance[tokenOwner][spender] = account;
+         emit Aproval(tokenOwner,spender,amount);
+         return true;
+         
+     }
+     function transferFrom(address tokenOwner,address recipient, uint256 amount)public virtual override returns (bool){
+         address spender = msg.sender;
+         uint256 _allowance = _allowances[tokenOwner][spender];
+         require(_allowance > amount,"BCCI: transfer amount exceed amount limit ");
+         
+     }
+     //deducting allowance
+     //_allowance = _allowance -amount;
+     //owner decrease balance
+     _balances[tokenOwner] = _balances[tokenOwner] - amount;
+     
+     //transfer token from recipient
+     _balances[recipient] = _balances[recipient] + amount;
+     
+     emit transfer(tokenOwner, recipient,amount);
+     
+     //decrease the approval amount
+     _allowances[tokenOwner][spender]=_allowance;
+     
+     emit Aproval(tokenOwner,spender,amount);
+     return true;
+ }
